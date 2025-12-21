@@ -1,6 +1,6 @@
 # Dust Disk Simulator
 
-Part of [Prof. Robert Vanderbei's Java Applications](https://pubino.github.io/vanderbei-apps).
+Part of [Prof. Robert Vanderbei's Java Applications](https://pubino.github.io/vanderbei-apps#dustdisk-sim).
 
 A Java-based N-body gravitational simulator by Professor Robert Vanderbei,Princeton University, for studying protoplanetary dust disk dynamics. This simulation models dust particle behavior around stars and planetary systems.
 
