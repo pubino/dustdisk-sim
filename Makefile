@@ -37,6 +37,24 @@ $(JAR_FILE): $(SOURCES)
 	$(JAVAC) -d $(BUILD_DIR) -sourcepath . $(JAVAC_FLAGS) $(SOURCES)
 	cd $(BUILD_DIR) && $(JAR) cfe $(JAR_FILE) $(MAIN_CLASS) astro/ myutil/
 	@echo "Build complete: $(JAR_FILE)"
+	@read -p "Would you like to run the application? [y/N] " answer; \
+	if [ "$$answer" = "y" ] || [ "$$answer" = "Y" ]; then \
+		if command -v java >/dev/null 2>&1; then \
+			echo "=== Running $(JAR_FILE) ==="; \
+			java -jar $(JAR_FILE); \
+		else \
+			echo "Error: Java not found in PATH"; \
+			echo ""; \
+			echo "To install Java via Homebrew:"; \
+			echo "  brew install openjdk"; \
+			echo ""; \
+			echo "Or install a specific version:"; \
+			echo "  brew install openjdk@21"; \
+			echo ""; \
+			echo "After installation, you may need to add it to your PATH:"; \
+			echo "  echo 'export PATH=\"/opt/homebrew/opt/openjdk/bin:\$$PATH\"' >> ~/.zshrc"; \
+		fi \
+	fi
 
 .PHONY: app
 app: $(APP_BUNDLE)
