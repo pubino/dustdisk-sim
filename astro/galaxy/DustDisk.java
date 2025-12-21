@@ -6,7 +6,7 @@ import java.applet.*;
 // import java.awt.image.*;
 // import java.util.*;
 // import java.io.*;
-// import java.net.*;
+import java.net.URI;
 // import java.text.*;
 import javax.swing.*;
 
@@ -31,6 +31,9 @@ public class DustDisk extends JApplet implements ActionListener, WindowListener,
 	JComboBox SELECTION;
 	JComboBox INTEGRATOR;
 	JComboBox STEPLENGTH;
+
+	// Menu item reference for syncing with button
+	CheckboxMenuItem menuTrailsItem;
 
 	JPanel cp1, cp2, cp3;
 	JPanel tp;
@@ -60,7 +63,15 @@ public class DustDisk extends JApplet implements ActionListener, WindowListener,
 	final int EDGEON=1;
 
         public static void main(String[] args) {
-                new AppletFrame(new DustDisk(), 1000, 1000);
+                // Enable macOS screen menu bar
+                System.setProperty("apple.laf.useScreenMenuBar", "true");
+                System.setProperty("apple.awt.application.name", "Dust Disk Simulator");
+
+                DustDisk dustDisk = new DustDisk();
+                AppletFrame frame = new AppletFrame(dustDisk, 1000, 1000);
+
+                // Create macOS menu bar
+                dustDisk.setupMenuBar(frame);
         }
 
 	public void init()
@@ -400,11 +411,13 @@ public class DustDisk extends JApplet implements ActionListener, WindowListener,
 		    TRAIL.setText("Hide Trails");
 		    TRAIL.setToolTipText("Show historical trails");
 		    cc.setTrails(true);
+		    if (menuTrailsItem != null) menuTrailsItem.setState(true);
 		} else
 		if (TRAIL.getText().equals("Hide Trails")) {
 		    TRAIL.setText("Show Trails");
 		    TRAIL.setToolTipText("Hide historical trails");
 		    cc.setTrails(false);
+		    if (menuTrailsItem != null) menuTrailsItem.setState(false);
 		} 
 	    } else if (e.getSource() == SHOWORIG) {
 		if (SHOWORIG.getText().equals("Orig")) {
@@ -498,4 +511,59 @@ public class DustDisk extends JApplet implements ActionListener, WindowListener,
 	public void windowDeiconified(WindowEvent e) { cc.timer.start(); }
 	public void windowActivated(WindowEvent e) { }
 	public void windowDeactivated(WindowEvent e) { }
+
+	public void setupMenuBar(Frame frame) {
+		MenuBar menuBar = new MenuBar();
+
+		// Controls menu
+		Menu controlsMenu = new Menu("Controls");
+		MenuItem startItem = new MenuItem("Start", new MenuShortcut(KeyEvent.VK_R));
+		MenuItem pauseItem = new MenuItem("Pause", new MenuShortcut(KeyEvent.VK_P));
+		startItem.addActionListener(e -> START.doClick());
+		pauseItem.addActionListener(e -> PAUSEPLAY.doClick());
+		controlsMenu.add(startItem);
+		controlsMenu.add(pauseItem);
+
+		// View menu
+		Menu viewMenu = new Menu("View");
+		menuTrailsItem = new CheckboxMenuItem("Show Trails", false);
+		menuTrailsItem.setShortcut(new MenuShortcut(KeyEvent.VK_T));
+		menuTrailsItem.addItemListener(e -> {
+			if (menuTrailsItem.getState()) {
+				if (TRAIL.getText().equals("Show Trails")) {
+					TRAIL.doClick();
+				}
+			} else {
+				if (TRAIL.getText().equals("Hide Trails")) {
+					TRAIL.doClick();
+				}
+			}
+		});
+		viewMenu.add(menuTrailsItem);
+		viewMenu.addSeparator();
+		MenuItem zoomInItem = new MenuItem("Zoom In", new MenuShortcut(KeyEvent.VK_EQUALS));
+		MenuItem zoomOutItem = new MenuItem("Zoom Out", new MenuShortcut(KeyEvent.VK_MINUS));
+		zoomInItem.addActionListener(e -> ZOOMIN.doClick());
+		zoomOutItem.addActionListener(e -> ZOOMOUT.doClick());
+		viewMenu.add(zoomInItem);
+		viewMenu.add(zoomOutItem);
+
+		// Help menu
+		Menu helpMenu = new Menu("Help");
+		MenuItem homePageItem = new MenuItem("Prof. Vanderbei's Home Page");
+		homePageItem.addActionListener(e -> {
+			try {
+				Desktop.getDesktop().browse(new URI("https://vanderbei.princeton.edu"));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		helpMenu.add(homePageItem);
+
+		menuBar.add(controlsMenu);
+		menuBar.add(viewMenu);
+		menuBar.add(helpMenu);
+
+		frame.setMenuBar(menuBar);
+	}
 }
