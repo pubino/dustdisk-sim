@@ -47,7 +47,3 @@ dustdisk-sim/
 ├── Makefile
 └── README.md
 ```
-
-## License
-
-Educational/Research use.
