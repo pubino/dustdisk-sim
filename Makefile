@@ -18,13 +18,29 @@ APP_NAME := DustDiskSimulator
 DISPLAY_NAME := Dust Disk Simulator
 BUNDLE_ID := edu.princeton.vanderbei.dustdisk-sim
 VERSION := 1.0.0
-JAVA_VERSION_RAW := $(shell $(JAVAC) -version 2>&1 | head -1 | sed 's/javac //' | cut -d. -f1)
-JAVA_VERSION := $(shell echo $(JAVA_VERSION_RAW) | grep -o '^[0-9]*')
+# Check for Java availability (actually test javac, not just if it exists)
+JAVA_WORKS := $(shell javac -version 2>&1 | grep -q "javac" && echo yes)
+JAVA_VERSION := $(shell javac -version 2>&1 | grep -o '[0-9]\+' | head -1)
 
 .PHONY: check-java
 check-java:
-	@if [ -z "$(JAVA_VERSION)" ]; then echo "ERROR: Java compiler not found."; exit 1; \
-	elif [ "$(JAVA_VERSION)" -lt "$(MIN_JAVA_VERSION)" ]; then echo "ERROR: Java $(MIN_JAVA_VERSION)+ required."; exit 1; fi
+ifneq ($(JAVA_WORKS),yes)
+	@echo "Error: Java compiler (javac) not found."
+ifeq ($(shell uname),Darwin)
+	@echo "Install Java on macOS with brew install openjdk and add it to your PATH."
+else
+	@echo "Please install a Java Development Kit (JDK)."
+endif
+	@exit 1
+else ifeq ($(shell test $(JAVA_VERSION) -lt $(MIN_JAVA_VERSION) && echo yes),yes)
+	@echo "Error: Java $(MIN_JAVA_VERSION)+ required, but found Java $(JAVA_VERSION)."
+ifeq ($(shell uname),Darwin)
+	@echo "Install Java on macOS with brew install openjdk and add it to your PATH."
+else
+	@echo "Please install a Java Development Kit (JDK)."
+endif
+	@exit 1
+endif
 
 .PHONY: all
 all: jar
