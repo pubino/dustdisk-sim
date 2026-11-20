@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Explore the dynamics of a dust disk around the Sun and planets.">
+  <title>Dust Disk Simulator</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow"><a href="https://pubino.github.io/vanderbei-apps#dustdisk-sim">Vanderbei’s applications</a> · Princeton University</p>
+      <h1>Dust Disk Simulator</h1>
+      <p class="intro">Explore how gravity shapes a dust disk around the Sun and planets. Follow the solar system or zoom in on a ring near Jupiter’s orbit.</p>
+    </header>
+
+    <section class="panel" aria-labelledby="simulation-heading">
+      <h2 id="simulation-heading">Simulation</h2>
+      <div class="viewer">
+        <div class="sky">
+          <div class="sky-frame">
+            <canvas id="sky" width="640" height="640" role="img" aria-label="Projected positions of planets and dust particles"></canvas>
+            <span id="loading" class="loading">Loading Python…</span>
+          </div>
+          <dl class="facts">
+            <div><dt>Elapsed</dt><dd id="elapsed">—</dd></div>
+            <div><dt>View width</dt><dd id="extent">—</dd></div>
+            <div><dt>Dust remaining</dt><dd id="visible">—</dd></div>
+            <div><dt title="Original energy diagnostic, twice the conventional total energy">Energy (×10¹²)</dt><dd id="energy">—</dd></div>
+          </dl>
+        </div>
+
+        <form id="settings" class="controls">
+          <fieldset id="controls" disabled>
+            <legend class="sr-only">Simulation controls</legend>
+            <label class="field" for="scenario">Scenario
+              <select id="scenario">
+                <option value="solar">Dusty Solar System</option>
+                <option value="disk">Dust Disk Face-On</option>
+              </select>
+            </label>
+            <label class="field" for="integrator">Integrator
+              <select id="integrator">
+                <option value="leapfrog">Midpoint (Leapfrog)</option>
+                <option value="hermite">Hermite</option>
+              </select>
+            </label>
+            <div class="form-grid">
+              <label class="field" for="count">Bodies
+                <input id="count" type="number" min="14" max="4000" step="1" value="2000" required>
+              </label>
+              <label class="field" for="dt">Step (years)
+                <input id="dt" type="number" min="0.0000001" max="1" step="any" value="0.01" required>
+              </label>
+              <label class="field" for="warp" title="Integration steps per rendered frame">Warp
+                <input id="warp" type="number" min="1" max="100" step="1" value="50" required>
+              </label>
+              <label class="field" for="orientation">Inclination (°)
+                <input id="orientation" type="number" min="0" max="90" step="any" value="0" required>
+              </label>
+            </div>
+            <label class="field" for="center">Center on
+              <select id="center"><option value="-1">Origin</option></select>
+            </label>
+            <div class="actions">
+              <button id="play">Start</button>
+              <button id="reset" class="secondary" type="button">Reset</button>
+            </div>
+            <div class="view-controls">
+              <div class="zoom" role="group" aria-label="Zoom">
+                <button id="zoom-out" type="button" class="secondary" aria-label="Zoom out">−</button>
+                <button id="zoom-in" type="button" class="secondary" aria-label="Zoom in">+</button>
+              </div>
+              <label><input id="trails" type="checkbox"> Show trails</label>
+              <label><input id="original" type="checkbox"> Show initial positions</label>
+              <label><input id="accrete" type="checkbox"> Accrete (Leapfrog)</label>
+            </div>
+          </fieldset>
+          <p id="status" class="hint" role="status">Loading the simulation engine…</p>
+          <p id="error" role="alert" hidden></p>
+          <button id="retry" type="button" class="secondary" hidden>Reload simulator</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <p>Based on Robert Vanderbei’s Dust Disk Simulator. Python runs in your browser via
+        <a href="https://pyodide.org/">Pyodide</a>. <a href="https://github.com/pubino/dustdisk-sim">Source on GitHub</a>.</p>
+    </footer>
+    <noscript><p>This simulator needs JavaScript to run Python in your browser.</p></noscript>
+  </main>
+</body>
+</html>
